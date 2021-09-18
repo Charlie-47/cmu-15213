@@ -2,6 +2,7 @@
  * CS:APP Data Lab 
  * 
  * <Please put your name and userid here>
+ *  - name: Charlie Auyeung
  * 
  * bits.c - Source file with your solutions to the Lab.
  *          This is the file you will hand in to your instructor.
@@ -141,21 +142,33 @@ NOTES:
  *   Legal ops: ~ &
  *   Max ops: 14
  *   Rating: 1
+ * 
+ * core: 将问题拆分成容易求解的小问题, 最后在合并 (DAC思想)
+ *  1. 子问题1: 先求出都是1的bit, 然后取反 -> 即都不是1的bit (但是存在都是0的可能)
+ *  2. 子问题2: 求出都是0的bit, 然后取反
+ * 
+ * 通过求解子问题得到了两个bit mode, 做与运算 -> 得到的bit, 表示都不是1或0, 这样就完成了异或运算
+ *
+ * cost ops: 6
  */
-int bitXor(int x, int y) {
-  return 2;
+int bitXor(int x, int y)
+{
+    return ~(x & y) & ~(~x & ~y);
 }
+
 /* 
  * tmin - return minimum two's complement integer 
  *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 4
  *   Rating: 1
  */
-int tmin(void) {
-
-  return 2;
-
+int tmin(void)
+{
+    // logic right shift.
+    int ans = (unsigned) ~0 >> 1;
+    return ~ans;
 }
+
 //2
 /*
  * isTmax - returns 1 if x is the maximum, two's complement number,
@@ -163,10 +176,16 @@ int tmin(void) {
  *   Legal ops: ! ~ & ^ | +
  *   Max ops: 10
  *   Rating: 1
+ * 
+ * core: x + x is as a left shift.
+ * notes: 0 is still 0 after the left shift, so we need to rule out this situation.
  */
-int isTmax(int x) {
-  return 2;
+int isTmax(int x)
+{
+    int tmp = x;
+    return !(tmp + tmp) & !!x;
 }
+
 /* 
  * allOddBits - return 1 if all odd-numbered bits in word set to 1
  *   where bits are numbered from 0 (least significant) to 31 (most significant)
@@ -175,8 +194,13 @@ int isTmax(int x) {
  *   Max ops: 12
  *   Rating: 2
  */
-int allOddBits(int x) {
-  return 2;
+int allOddBits(int x)
+{
+    x = x & (x >> 16); 
+    x = x & (x >> 8);
+    x = x & (x >> 4);
+    x = x & (x >> 2);
+    return x >> 1;
 }
 /* 
  * negate - return -x 
@@ -185,8 +209,9 @@ int allOddBits(int x) {
  *   Max ops: 5
  *   Rating: 2
  */
-int negate(int x) {
-  return 2;
+int negate(int x)
+{
+    return ~x + 1;
 }
 //3
 /* 
@@ -199,7 +224,11 @@ int negate(int x) {
  *   Rating: 3
  */
 int isAsciiDigit(int x) {
-  return 2;
+    int mask = ~0x3f;
+
+
+
+    return !(x & mask);
 }
 /* 
  * conditional - same as x ? y : z 
@@ -207,10 +236,14 @@ int isAsciiDigit(int x) {
  *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 16
  *   Rating: 3
+ * 
+ *  core: 使用异或的swap来做, 另外借助&&短路求值? 其中一种思路, but we cannot use && operator.
+ *  思路2: 表达式中都包含y和z，但可以根据x的结果来mask掉其中一种，二元法
  */
-int conditional(int x, int y, int z) {
-  return 2;
+int conditional(int x, int y, int z)
+{
 }
+
 /* 
  * isLessOrEqual - if x <= y  then return 1, else return 0 
  *   Example: isLessOrEqual(4,5) = 1.
